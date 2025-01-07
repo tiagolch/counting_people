@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumo das Contagens</title>
+    
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Resumo das Contagens</h1>
+
+    <form method="get" class="text-center mb-4">
+        <div class="row justify-content-center">
+            <!-- Filtro por Data -->
+            <div class="col-auto">
+                <label for="data" class="form-label">Filtrar por Data:</label>
+                <input type="date" name="data" id="data" class="form-control" value="{{ data_filtro }}">
+            </div>
+
+            <!-- Filtro por Localização -->
+            <div class="col-auto">
+                <label for="localizacao" class="form-label">Localização:</label>
+                <select name="localizacao" id="localizacao" class="form-select">
+                    <option value="">Todas as Localizações</option>
+                    {% for local in localizacoes %}
+                        <option value="{{ local.id }}" {% if localizacao_filtro == local.id|slugify %}selected{% endif %}>
+                            {{ local.nome }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Filtro por Horário -->
+            <div class="col-auto">
+                <label for="horario" class="form-label">Horário:</label>
+                <select name="horario" id="horario" class="form-select">
+                    <option value="">Todos os Horários</option>
+                    {% for horario in horarios %}
+                        <option value="{{ horario }}" {% if horario_filtro == horario|time:"H:i:s" %}selected{% endif %}>
+                            {{ horario|time:"H:i" }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Filtro por Validação -->
+            <div class="col-auto">
+                <label for="validado" class="form-label">Validação:</label>
+                <select name="validado" id="validado" class="form-select">
+                    <option value="">Todos</option>
+                    <option value="1" {% if validado_filtro == '1' %}selected{% endif %}>Validados</option>
+                    <option value="0" {% if validado_filtro == '0' %}selected{% endif %}>Não Validados</option>
+                </select>
+            </div>
+
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary mt-4">Filtrar</button>
+            </div>
+        </div>
+    </form>
+
+    {% if contagens %}
+    <!-- Card Consolidado com Totais -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h4>Resumo Consolidado</h4>
+            <p><strong>Data:</strong> {{ data_filtro }}</p>
+            {% if localizacao_selecionada %}
+                <p><strong>Localização:</strong> {{ localizacao_selecionada.nome }}</p>
+            {% endif %}
+            {% if horario_filtro %}
+                <p><strong>Horário:</strong> {{ horario_filtro }}</p>
+            {% endif %}
+            
+            <ul class="list-group">
+                <li class="list-group-item"><strong>Total de Pessoas:</strong> {{ totais.total_pessoas|default:"0" }}</li>
+                <li class="list-group-item"><strong>Total de Visitantes:</strong> {{ totais.total_visitantes|default:"0" }}</li>
+                <li class="list-group-item"><strong>Total de Crianças:</strong> {{ totais.total_criancas|default:"0" }}</li>
+                <li class="list-group-item"><strong>Total de Conversões:</strong> {{ totais.total_conversoes|default:"0" }}</li>
+            </ul>
+            
+            <button class="btn btn-success mt-3" onclick="copiarResumo()">Copiar Resumo</button>
+            <textarea id="resumoTexto" class="d-none">
+Resumo de Contagem - {{ data_filtro }}
+{% if localizacao_selecionada %}Localização: {{ localizacao_selecionada.nome }}{% endif %}
+{% if horario_filtro %}Horário: {{ horario_filtro }}{% endif %}
+Total de Pessoas: {{ totais.total_pessoas|default:"0" }}
+Total de Visitantes: {{ totais.total_visitantes|default:"0" }}
+Total de Crianças: {{ totais.total_criancas|default:"0" }}
+Total de Conversões: {{ totais.total_conversoes|default:"0" }}
+            </textarea>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Tabela com Detalhes -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Reunião</th>
+                        <th>Host</th>
+                        <th>Total Pessoas</th>
+                        <th>Visitantes</th>
+                        <th>Crianças</th>
+                        <th>Conversões</th>
+                        <th>Validado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contagem in contagens %}
+                    <tr>
+                        <td>{{ contagem.reuniao }}</td>
+                        <td>{{ contagem.host_nome }}</td>
+                        <td>{{ contagem.total_pessoas }}</td>
+                        <td>{{ contagem.visitantes }}</td>
+                        <td>{{ contagem.criancas }}</td>
+                        <td>{{ contagem.conversoes }}</td>
+                        <td>
+                            {% if contagem.validado %}
+                                <span class="badge bg-success">Sim</span>
+                            {% else %}
+                                <span class="badge bg-danger">Não</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">Nenhuma contagem encontrada.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function copiarResumo() {
+        var resumo = document.getElementById("resumoTexto");
+        resumo.classList.remove("d-none");
+        resumo.select();
+        document.execCommand("copy");
+        resumo.classList.add("d-none");
+        alert("Resumo copiado para a área de transferência!");
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
