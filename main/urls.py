@@ -22,5 +22,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.enviar_contagem, name='enviar_contagem'),
     path('resumo/', views.resumo_contagem, name='resumo_contagem'),
+    path('get_horarios/', views.get_horarios, name='get_horarios'),
     path('contagem/enviada/', views.contagem_enviada, name='contagem_enviada'),
+    path('atualizar_validacao/<int:contagem_id>/', views.atualizar_validacao, name='atualizar_validacao'),
+
 ]

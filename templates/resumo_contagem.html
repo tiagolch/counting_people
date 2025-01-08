@@ -7,25 +7,37 @@
     
     <!-- Bootstrap 5 CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Resumo de Contagens</a>
+        <div class="d-flex">
+            <a href="/admin/" class="btn btn-outline-light me-2">
+                <i class="fas fa-tools"></i> Admin
+            </a>
+        </div>
+    </div>
+</nav>
 
 <div class="container mt-5">
     <h1 class="text-center mb-4">Resumo das Contagens</h1>
 
+    <!-- Filtros -->
     <form method="get" class="text-center mb-4">
-        <div class="row justify-content-center">
-            <!-- Filtro por Data -->
-            <div class="col-auto">
-                <label for="data" class="form-label">Filtrar por Data:</label>
+        <div class="row justify-content-center g-3">
+            <div class="col-md-3">
+                <label for="data" class="form-label">Data</label>
                 <input type="date" name="data" id="data" class="form-control" value="{{ data_filtro }}">
             </div>
 
-            <!-- Filtro por Localização -->
-            <div class="col-auto">
-                <label for="localizacao" class="form-label">Localização:</label>
+            <div class="col-md-3">
+                <label for="localizacao" class="form-label">Localização</label>
                 <select name="localizacao" id="localizacao" class="form-select">
-                    <option value="">Todas as Localizações</option>
+                    <option value="">Todas</option>
                     {% for local in localizacoes %}
                         <option value="{{ local.id }}" {% if localizacao_filtro == local.id|slugify %}selected{% endif %}>
                             {{ local.nome }}
@@ -34,11 +46,10 @@
                 </select>
             </div>
 
-            <!-- Filtro por Horário -->
-            <div class="col-auto">
-                <label for="horario" class="form-label">Horário:</label>
+            <div class="col-md-3">
+                <label for="horario" class="form-label">Horário</label>
                 <select name="horario" id="horario" class="form-select">
-                    <option value="">Todos os Horários</option>
+                    <option value="">Todos</option>
                     {% for horario in horarios %}
                         <option value="{{ horario }}" {% if horario_filtro == horario|time:"H:i:s" %}selected{% endif %}>
                             {{ horario|time:"H:i" }}
@@ -47,9 +58,8 @@
                 </select>
             </div>
 
-            <!-- Filtro por Validação -->
-            <div class="col-auto">
-                <label for="validado" class="form-label">Validação:</label>
+            <div class="col-md-3">
+                <label for="validado" class="form-label">Validação</label>
                 <select name="validado" id="validado" class="form-select">
                     <option value="">Todos</option>
                     <option value="1" {% if validado_filtro == '1' %}selected{% endif %}>Validados</option>
@@ -57,17 +67,19 @@
                 </select>
             </div>
 
-            <div class="col-auto">
-                <button type="submit" class="btn btn-primary mt-4">Filtrar</button>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-filter"></i> Filtrar
+                </button>
             </div>
         </div>
     </form>
 
+    <!-- Resumo Consolidado -->
     {% if contagens %}
-    <!-- Card Consolidado com Totais -->
     <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <h4>Resumo Consolidado</h4>
+            <h4><i class="fas fa-chart-line"></i> Resumo Consolidado</h4>
             <p><strong>Data:</strong> {{ data_filtro }}</p>
             {% if localizacao_selecionada %}
                 <p><strong>Localização:</strong> {{ localizacao_selecionada.nome }}</p>
@@ -83,7 +95,9 @@
                 <li class="list-group-item"><strong>Total de Conversões:</strong> {{ totais.total_conversoes|default:"0" }}</li>
             </ul>
             
-            <button class="btn btn-success mt-3" onclick="copiarResumo()">Copiar Resumo</button>
+            <button class="btn btn-success mt-3" onclick="copiarResumo()">
+                <i class="fas fa-copy"></i> Copiar Resumo
+            </button>
             <textarea id="resumoTexto" class="d-none">
 Resumo de Contagem - {{ data_filtro }}
 {% if localizacao_selecionada %}Localização: {{ localizacao_selecionada.nome }}{% endif %}
@@ -97,7 +111,7 @@ Total de Conversões: {{ totais.total_conversoes|default:"0" }}
     </div>
     {% endif %}
 
-    <!-- Tabela com Detalhes -->
+    <!-- Tabela Detalhada -->
     <div class="card shadow-sm">
         <div class="card-body">
             <table class="table table-hover table-striped">
@@ -110,6 +124,7 @@ Total de Conversões: {{ totais.total_conversoes|default:"0" }}
                         <th>Crianças</th>
                         <th>Conversões</th>
                         <th>Validado</th>
+                        <th>Ação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -122,16 +137,15 @@ Total de Conversões: {{ totais.total_conversoes|default:"0" }}
                         <td>{{ contagem.criancas }}</td>
                         <td>{{ contagem.conversoes }}</td>
                         <td>
-                            {% if contagem.validado %}
-                                <span class="badge bg-success">Sim</span>
-                            {% else %}
-                                <span class="badge bg-danger">Não</span>
-                            {% endif %}
+                            <span id="validado-{{ contagem.id }}" class="badge {% if contagem.validado %}bg-success{% else %}bg-danger{% endif %}">
+                                {% if contagem.validado %}Sim{% else %}Não{% endif %}
+                            </span>
                         </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="7" class="text-center">Nenhuma contagem encontrada.</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="atualizarValidacao({{ contagem.id }})">
+                                <i class="fas fa-edit"></i> Alterar
+                            </button>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -151,7 +165,38 @@ Total de Conversões: {{ totais.total_conversoes|default:"0" }}
     }
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function atualizarValidacao(contagemId) {
+        fetch(`/atualizar_validacao/${contagemId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',  // Garante segurança com CSRF token
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                const badge = document.getElementById(`validado-${contagemId}`);
+                if (data.validado) {
+                    badge.classList.remove('bg-danger');
+                    badge.classList.add('bg-success');
+                    badge.textContent = 'Sim';
+                } else {
+                    badge.classList.remove('bg-success');
+                    badge.classList.add('bg-danger');
+                    badge.textContent = 'Não';
+                }
+            } else {
+                alert('Erro ao atualizar a validação.');
+            }
+        })
+        .catch(error => console.error('Erro:', error));
+    }
+</script>
 
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
