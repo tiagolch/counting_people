@@ -127,3 +127,9 @@ SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 X_FRAME_OPTIONS = 'DENY'
 
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://counting-people.onrender.com',
+]
+
+
