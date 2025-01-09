@@ -60,24 +60,30 @@ TEMPLATES = [
 WSGI_APPLICATION = 'main.wsgi.application'
 
 # Banco de Dados - SQLite (Desenvolvimento)
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
+
+# Banco de Dados (PostgreSQL)
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
 }
 
-# Banco de Dados (PostgreSQL)
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('DB_NAME', 'meubanco'),
-#         'USER': os.getenv('DB_USER', 'usuario'),
-#         'PASSWORD': os.getenv('DB_PASSWORD', 'senha'),
-#         'HOST': os.getenv('DB_HOST', 'localhost'),
-#         'PORT': os.getenv('DB_PORT', '5432'),
-#     }
-# }
+print(f"DB_NAME: {os.getenv('DB_NAME')}")
+print(f"DB_USER: {os.getenv('DB_USER')}")
+print(f"DB_PASSWORD: {os.getenv('DB_PASSWORD')}")
+print(f"DB_HOST: {os.getenv('DB_HOST')}")
+print(f"DB_PORT: {os.getenv('DB_PORT')}")
 
 # Validação de senha
 AUTH_PASSWORD_VALIDATORS = [
