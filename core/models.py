@@ -29,7 +29,7 @@ class Reuniao(models.Model):
 
 class Contagem(models.Model):
     reuniao = models.ForeignKey(Reuniao, on_delete=models.CASCADE)
-    data_reuniao = models.DateField(default=now) 
+    data_reuniao = models.DateField(auto_now_add=True) 
     host_nome = models.CharField(max_length=100)  
     total_pessoas = models.PositiveIntegerField(default=0)
     visitantes = models.PositiveIntegerField(default=0)

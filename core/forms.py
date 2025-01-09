@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.timezone import now
 from .models import Contagem, Reuniao, Localizacao
 
 
@@ -13,13 +14,6 @@ class ContagemForm(forms.ModelForm):
         queryset=Reuniao.objects.none(),
         empty_label="Selecione o Horário",
         widget=forms.Select(attrs={'class': 'form-control'})
-    )
-
-    data_reuniao = forms.DateField(
-        widget=forms.DateInput(attrs={
-            'type': 'date',
-            'class': 'form-control'
-        })
     )
 
     host_nome = forms.CharField(
@@ -64,7 +58,7 @@ class ContagemForm(forms.ModelForm):
 
     class Meta:
         model = Contagem
-        fields = ['localizacao', 'horario', 'data_reuniao', 'host_nome', 'total_pessoas', 'visitantes', 'criancas', 'conversoes']
+        fields = ['localizacao', 'horario', 'host_nome', 'total_pessoas', 'visitantes', 'criancas', 'conversoes']
 
     def __init__(self, *args, **kwargs):
         super(ContagemForm, self).__init__(*args, **kwargs)
