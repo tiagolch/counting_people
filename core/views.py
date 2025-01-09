@@ -16,7 +16,19 @@ def enviar_contagem(request):
         if form.is_valid():
             if form.cleaned_data.get('horario'):
                 form.save()
-                messages.success(request, 'Contagem enviada com sucesso!')
+                total_pessoas = form.cleaned_data.get('total_pessoas', 0)
+                visitantes = form.cleaned_data.get('visitantes', 0)
+                criancas = form.cleaned_data.get('criancas', 0)
+                conversoes = form.cleaned_data.get('conversoes', 0)
+
+                mensagem = (
+                    f"Contagens enviadas com sucesso! (Totais: "
+                    f"Pessoas: {total_pessoas}, "
+                    f"Visitantes: {visitantes}, "
+                    f"Crianças: {criancas}, "
+                    f"Conversões: {conversoes})"
+                )
+                messages.success(request, mensagem)
                 return redirect('enviar_contagem')
             else:
                 messages.error(request, 'Por favor, selecione um horário válido.')
