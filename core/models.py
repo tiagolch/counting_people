@@ -35,6 +35,7 @@ class Contagem(models.Model):
     visitantes = models.PositiveIntegerField(default=0)
     criancas = models.PositiveIntegerField(default=0)
     conversoes = models.PositiveIntegerField(default=0)
+    voluntarios = models.PositiveIntegerField(default=0)
     data_registro = models.DateTimeField(default=now)
     validado = models.BooleanField(default=False)
 
