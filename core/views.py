@@ -3,7 +3,7 @@ from .forms import ContagemForm
 from django.shortcuts import render, get_object_or_404
 from .models import Contagem
 from django.utils.timezone import now
-from django.db.models import Sum
+from django.db.models import Sum, F
 from .models import Contagem, Localizacao, Reuniao
 from django.http import JsonResponse
 from datetime import datetime
@@ -20,13 +20,15 @@ def enviar_contagem(request):
                 visitantes = form.cleaned_data.get('visitantes', 0)
                 criancas = form.cleaned_data.get('criancas', 0)
                 conversoes = form.cleaned_data.get('conversoes', 0)
+                voluntarios = form.cleaned_data.get('voluntarios', 0)
 
                 mensagem = (
                     f"Contagens enviadas com sucesso! (Totais: "
                     f"Pessoas: {total_pessoas}, "
                     f"Visitantes: {visitantes}, "
                     f"Crianças: {criancas}, "
-                    f"Conversões: {conversoes})"
+                    f"Conversões: {conversoes}, "
+                    f"Voluntários: {voluntarios})"
                 )
                 messages.success(request, mensagem)
                 return redirect('enviar_contagem')
@@ -82,8 +84,11 @@ def resumo_contagem(request):
         total_pessoas=Sum('total_pessoas'),
         total_visitantes=Sum('visitantes'),
         total_criancas=Sum('criancas'),
-        total_conversoes=Sum('conversoes')
+        total_conversoes=Sum('conversoes'),
+        total_voluntarios=Sum('voluntarios')
     )
+
+    total_com_voluntarios = (totais.get('total_pessoas') or 0) + (totais.get('total_voluntarios') or 0)
 
     return render(request, 'resumo_contagem.html', {
         'contagens': contagens,
@@ -94,7 +99,8 @@ def resumo_contagem(request):
         'localizacao_selecionada': localizacao_selecionada,
         'horario_filtro': horario_filtro,
         'validado_filtro': validado_filtro,
-        'totais': totais
+        'totais': totais,
+        'total_com_voluntarios': total_com_voluntarios,
     })
 
 
