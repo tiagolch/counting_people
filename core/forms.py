@@ -56,20 +56,9 @@ class ContagemForm(forms.ModelForm):
         initial=0
     )
 
-    voluntarios = forms.IntegerField(
-        widget=forms.NumberInput(attrs={
-            'class': 'form-control',
-            'placeholder': '*Reservado para o líder',
-            'aria-placeholder': '*Reservado para o líder',
-            'label': 'Volutarios: Reservado para o líder',
-            'min': 0, 
-        }),
-        initial=0
-    )
-
     class Meta:
         model = Contagem
-        fields = ['localizacao', 'horario', 'host_nome', 'total_pessoas', 'visitantes', 'criancas', 'conversoes', 'voluntarios']
+        fields = ['localizacao', 'horario', 'host_nome', 'total_pessoas', 'visitantes', 'criancas', 'conversoes']
 
     def __init__(self, *args, **kwargs):
         super(ContagemForm, self).__init__(*args, **kwargs)
