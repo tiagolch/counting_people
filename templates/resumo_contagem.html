@@ -93,23 +93,19 @@
                 <li class="list-group-item"><strong>Total de Visitantes:</strong> {{ totais.total_visitantes|default:"0" }}</li>
                 <li class="list-group-item"><strong>Total de Crianças:</strong> {{ totais.total_criancas|default:"0" }}</li>
                 <li class="list-group-item"><strong>Total de Conversões:</strong> {{ totais.total_conversoes|default:"0" }}</li>
-                <li class="list-group-item"><strong>Total de Voluntarios:</strong> {{ totais.total_voluntarios|default:"0" }}</strong></li>
-                <li class="list-group-item"><strong>Total Geral (Com Voluntários):</strong> {{ total_com_voluntarios|default:"0" }}</strong></li>
             </ul>
             
             <button class="btn btn-success mt-3" onclick="copiarResumo()">
                 <i class="fas fa-copy"></i> Copiar Resumo
             </button>
             <textarea id="resumoTexto" class="d-none">
-                Resumo de Contagem - {{ data_filtro }}
-                {% if localizacao_selecionada %}Localização: {{ localizacao_selecionada.nome }}{% endif %}
-                {% if horario_filtro %}Horário: {{ horario_filtro }}{% endif %}
-                Total de Pessoas: {{ totais.total_pessoas|default:"0" }}
-                Total de Visitantes: {{ totais.total_visitantes|default:"0" }}
-                Total de Crianças: {{ totais.total_criancas|default:"0" }}
-                Total de Conversões: {{ totais.total_conversoes|default:"0" }}
-                Total de Voluntarios: {{ totais.total_voluntarios|default:"0" }}
-                Total Geral (Com Voluntários): {{ total_com_voluntarios|default:"0" }}
+Resumo de Contagem - {{ data_filtro }}
+{% if localizacao_selecionada %}Localização: {{ localizacao_selecionada.nome }}{% endif %}
+{% if horario_filtro %}Horário: {{ horario_filtro }}{% endif %}
+Total de Pessoas: {{ totais.total_pessoas|default:"0" }}
+Total de Visitantes: {{ totais.total_visitantes|default:"0" }}
+Total de Crianças: {{ totais.total_criancas|default:"0" }}
+Total de Conversões: {{ totais.total_conversoes|default:"0" }}
             </textarea>
         </div>
     </div>
@@ -127,7 +123,6 @@
                         <th>Visitantes</th>
                         <th>Crianças</th>
                         <th>Conversões</th>
-                        <th>Voluntários</th>
                         <th>Validado</th>
                         <th>Ação</th>
                     </tr>
@@ -141,7 +136,6 @@
                         <td>{{ contagem.visitantes }}</td>
                         <td>{{ contagem.criancas }}</td>
                         <td>{{ contagem.conversoes }}</td>
-                        <td>{{ contagem.voluntarios }}</td>
                         <td>
                             <span id="validado-{{ contagem.id }}" class="badge {% if contagem.validado %}bg-success{% else %}bg-danger{% endif %}">
                                 {% if contagem.validado %}Sim{% else %}Não{% endif %}
